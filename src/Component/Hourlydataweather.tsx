@@ -1,6 +1,35 @@
 import {getWeatherEmoji, formatTime, formatShortDate} from "../Api/weatherHelper.js";
 
-const HourCard = ({hour}) => {
+interface Hour {
+    date: string;
+    time: string;
+    icon: string;
+    temperature: number;
+    feelsLike: number;
+    rainProbability: number;
+    windspeed: number;
+}
+
+// this for the tsx what eact return jsx clean return 
+interface HourCardProps {
+    hour: Hour;
+}
+
+interface HourSectionProps {
+    title: string;
+    hours: Hour[];
+}
+
+interface HourlyData {
+    previous24Hour: Hour[];
+    next24Hour: Hour[];
+}
+
+interface HourlyDataWeatherProps {
+    hours: HourlyData;
+}
+
+const HourCard = ({hour}: HourCardProps) => {
     return (
         <div className="flex min-w-[80px] flex-col items-center gap-1 rounded-xl
                   border border-slate-700/60 bg-slate-900 px-3 py-3
@@ -16,6 +45,7 @@ const HourCard = ({hour}) => {
                         {getWeatherEmoji(hour.icon)}
             </span>
             <p className="text-sm font-bold text-slate-100">
+                {/* yaha NAN error de raha ha solve karo */}
                         {Math.round(hour.temperature)}°C
             </p>
             <p className="text-[10px] text-slate-500">
@@ -28,7 +58,7 @@ const HourCard = ({hour}) => {
     )
 }
 
-const HourSection = ({ title, hours }) => {
+const HourSection = ({ title, hours }: HourSectionProps) => {
     return (
         <section>
             <h2 className="mb-2 text-xs font-bold uppercase tracking-widest text-slate-500">
@@ -48,7 +78,7 @@ const HourSection = ({ title, hours }) => {
 };
 
 
-const HourlyDataWeather = ({ hours }) => {
+const HourlyDataWeather = ({ hours }: HourlyDataWeatherProps) => {
     const {previous24Hour, next24Hour} = hours;
 
     return (
