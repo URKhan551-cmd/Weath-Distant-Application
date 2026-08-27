@@ -1,6 +1,22 @@
 import {getWeatherEmoji, formatDate } from "../Api/weatherHelper.js";
 
-const DailyWeatherData = ({ days }) => { 
+interface DailyWeather {
+    date: string;
+    icon: string;
+    conditions: string;
+    maxTemperature: number;
+    minTemperature: number;
+    rainProbability: number;
+    windSpeed: number;
+    humidity: number;
+}
+
+interface DailyWeatherDataProps {
+    days: DailyWeather[];
+}
+
+
+const DailyWeatherData = ({ days }: DailyWeatherDataProps) => { 
     return (
         <div className="flex flex-col gap-2">
             <h2 className="mb-1 text-xs font-bold uppercase tracking-widest text-slate-500">
@@ -46,4 +62,4 @@ const DailyWeatherData = ({ days }) => {
     )
 }
 
-export default DailyWeatherData
+export default DailyWeatherData;
