@@ -1,4 +1,9 @@
-const ErrorMessage = ({ message}) => { 
+interface ErrorMessageProp {
+    message: string;
+}
+
+
+const ErrorMessage = ({ message}: ErrorMessageProp) => { 
     return (
     <div 
             role="alert"
