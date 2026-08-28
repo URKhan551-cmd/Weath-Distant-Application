@@ -1,4 +1,9 @@
-const MainPage = ({onClick}) => {
+import type { MouseEventHandler} from "react";
+interface MainPageProps {
+    onClick: MouseEventHandler<HTMLButtonElement>;
+}
+
+const MainPage = ({onClick}: MainPageProps) => {
     return (
         <div className="flex min-h-screen items-center justify-center bg-fuchsia-600 px-4">
             <div className="w-full max-w-sm rounded-2xl border border-slate-800 bg-slate-900 p-8 text-center shadow-xl">

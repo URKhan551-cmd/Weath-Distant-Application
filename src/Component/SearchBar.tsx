@@ -1,4 +1,12 @@
-const SearchBar = ({value, onChange, onKeyDown}) => {
+import type {ChangeEventHandler, KeyboardEventHandler} from "react";
+interface SearchBarProps {
+    value: string;
+    onChange: ChangeEventHandler<HTMLInputElement>;
+    onKeyDown: KeyboardEventHandler<HTMLInputElement>;
+ }
+
+
+const SearchBar = ({value, onChange, onKeyDown}: SearchBarProps) => {
     return (
         <input
             id="searchBar"
