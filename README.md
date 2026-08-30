@@ -74,6 +74,20 @@ export default defineConfig([
 ])
 
 ```
+
+```js
+leaflet  js library
+Actual mapping engine.
+runtime dependency
+
+react-leaflet
+React integration for Leaflet.
+runtime dependency
+
+@types/leaflet
+TypeScript's knowledge about Leaflet.
+development dependency
+```
 =======
 # Weath-Distant-Application
 Weather and Destination with Ai integration sol 
