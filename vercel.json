@@ -4,7 +4,7 @@
     "api/weather.ts": {
       "maxDuration": 10
     },
-    "api/weather-coords.ts": {
+    "api/weatherCoords.ts": {
       "maxDuration": 10
     },
     "api/chat.ts": {
