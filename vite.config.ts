@@ -76,15 +76,5 @@ export default defineConfig({
     },
 },
 
-server : {
-  // in local dev proxy / api / calls to vercel dev server
-  // run vercel dev instead vite for full testing
-  proxy: {
-    "/api": {
-      target: "http://localhost:5173",
-      changeOrigin: true,
-    },
-  },
-},
 
 });

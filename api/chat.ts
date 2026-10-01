@@ -213,7 +213,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse){
     }
 
     // API key guard
-    const key = process.env.GEMINI_KEY;
+    const key = process.env.GEMINI_API_PRO_KEY;
     if(!key){
         return res.status(500).json({error: "Server configuration error."});
     }

@@ -82,7 +82,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse){
 
     // API KEY GUARD
     // key lives in vercel environment variables- never in code.
-    const key = process.env.WEATHER_KEY;
+    const key = process.env.WEATHER_API_KEY;
     if(!key){
         return res.status(500).json({error: "Server Configuration error."});
     }
