@@ -29,7 +29,8 @@ interface WeatherDay {
     sunset: string;
 }
 
-interface WeatherData {
+
+export interface WeatherData {
     address: string;
     currentConditions: CurrentConditions;
     days?: WeatherDay[];

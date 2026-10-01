@@ -10,7 +10,7 @@ interface Hour {
     windspeed: number;
 }
 
-// this for the tsx what eact return jsx clean return 
+
 interface HourCardProps {
     hour: Hour;
 }
@@ -53,7 +53,7 @@ const HourCard = ({hour}: HourCardProps) => {
                     </p>
 
                     <p className="text-[10px] text-slate-500">💧 {hour.rainProbability}%</p>
-    <p className="text-[10px] text-slate-500">💨 {hour.windSpeed}</p>
+    <p className="text-[10px] text-slate-500">💨 {hour.windspeed}</p>
                   </div>
     )
 }
@@ -61,7 +61,7 @@ const HourCard = ({hour}: HourCardProps) => {
 const HourSection = ({ title, hours }: HourSectionProps) => {
     return (
         <section>
-            <h2 className="mb-2 text-xs font-bold uppercase tracking-widest text-slate-500">
+            <h2 className="mb-2 text-xs font-bold uppercase tracking-widest text-fuchsia-600 bg-white-500">
                 {title}
             </h2>
             {hours.length === 0 ? (

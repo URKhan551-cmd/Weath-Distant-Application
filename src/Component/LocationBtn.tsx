@@ -5,6 +5,7 @@ import type { MouseEventHandler } from "react";
 interface LocationBtnProps {
     status: GeoStatus;
     onClick: MouseEventHandler<HTMLButtonElement>
+
 }
 
 const LocationBtn = ({ status, onClick }: LocationBtnProps) => {

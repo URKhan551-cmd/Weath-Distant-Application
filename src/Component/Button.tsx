@@ -8,7 +8,7 @@ type ButtonVariant = "primary" | "secondary" | "ghost";
   onClick?: MouseEventHandler<HTMLButtonElement>;
   children: ReactNode;
   disabled: boolean;
-  variant?: ButtonVariant; 
+  variant?: ButtonVariant;
 }
 
 const Button = ({ onClick, children, disabled = false, variant = "primary" }: ButtonProps) => { 

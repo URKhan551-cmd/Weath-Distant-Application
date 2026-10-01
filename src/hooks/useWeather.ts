@@ -1,6 +1,7 @@
 import {useState, useCallback} from "react";
 
-import {apiResponse, apiResponseByCoords} from "../Api/apiResponse.js";
+
+import {apiResponse, apiResponseByCoords} from "../Api/apiResponse.ts";
 
 // get actual response type of the data coming frm an api
 type WeatherData = Awaited<ReturnType<typeof apiResponse>>;
@@ -11,14 +12,17 @@ interface Coordinates {
     lon: number;
 }
 
-type LastLocation = { type: "city"; value: string; } | { type: "coords"; value: Coordinates; } | null;
+
+type LastLocation = |{ type: "city"; value: string; } | { type: "coords"; value: Coordinates; } | null;
 
 
 
 export function useWeather(){
-    const [data, setData] = useState<WeatherData | WeatherCoordsData | null>(null);
+
+    
+    const [data, setData] = useState<WeatherData | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
-    const [error, setError] = useState<string>(null);
+    const [error, setError] = useState<string | null>(null);
     const [lastLocation, setLastLocation] = useState<LastLocation>(null);
 
     const fetchByCity = useCallback( async (city: string): Promise<void> => {
@@ -36,7 +40,8 @@ export function useWeather(){
                 value: target,
             });
         } catch(err: unknown){
-            setError(err.instanceof Error ? err.message : "something went wrong. Please try Again.");
+
+            setError(err instanceof Error ? err.message : "something went wrong. Please try Again.");
             setData(null);
 
         }finally{
@@ -58,7 +63,8 @@ export function useWeather(){
                 },
             });
         } catch (err: unknown){
-            setError(err.instanceof Error ? err.message : "Could not fetch weather for your location.");
+
+            setError(err instanceof Error ? err.message : "Could not fetch weather for your location.");
             setData(null);
         }finally{
             setLoading(false);

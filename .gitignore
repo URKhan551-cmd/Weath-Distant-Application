@@ -11,6 +11,8 @@ node_modules
 dist
 dist-ssr
 *.local
+.vercel/
+
 
 # Editor directories and files
 .vscode/*
@@ -22,7 +24,14 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+
 .env
 .env.local
 .env.development
 .env.production
+.env.*.local
+
+*.tsbuildinfo
+
+.vercel.json

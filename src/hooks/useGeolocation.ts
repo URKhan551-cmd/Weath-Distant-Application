@@ -8,9 +8,9 @@ export const  GEO_STATUS = {
     DENIED: "denied",
     UNAVAILABLE: "unavailable",
     TIMEOUT: "timeout",
-};
+} as const;
 
-type GeoStatus = "idle" | "loading" | "success" | "denied" | "unavailable" | "timeout";
+export type GeoStatus = "idle" | "loading" | "success" | "denied" | "unavailable" | "timeout";
 
 export interface Coordinates {
     lat: number;
@@ -20,6 +20,7 @@ export function useGeolocation(){
     const [status, setStatus] = useState<GeoStatus>("idle");
     const [coords, setCoords] = useState<Coordinates | null>(null); // {lat, lon};
     const [error, setError] = useState<string | null>(null);
+
 
     const geoLocation = useCallback((): void => {
         // browser does not suppport geolocaton
@@ -80,4 +81,5 @@ export function useGeolocation(){
     }, []);
 
     return {status, coords, error, geoLocation, reset}
+
 }
