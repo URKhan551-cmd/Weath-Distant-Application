@@ -46,7 +46,7 @@ export function useSavedDestinations(){
                     id,
                     city: city.trim(), 
                     savedAt: new Date().toISOString(), 
-                    emoji,
+                    emoji: emoji ?? "📍",
                 },
                 ...prev
             ].slice(0, 20);  // max saved

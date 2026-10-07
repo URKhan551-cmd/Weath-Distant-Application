@@ -1,5 +1,5 @@
 interface ErrorMessageProp {
-    message: string;
+    message: string | null;
 }
 
 

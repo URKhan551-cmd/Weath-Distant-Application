@@ -1,9 +1,9 @@
 
 
-interface WeatherDay {
-    sunrise: string;
-    sunset: string;
-}
+// interface WeatherDay {
+//     sunrise: string;
+//     sunset: string;
+// }
 
 export interface WeatherApiResponse {
     address: string;
@@ -151,13 +151,13 @@ export async function apiResponse(location: string): Promise<WeatherApiResponse>
 };
 
 // SEARCH by Coordinates  gogle map api call  (latitude, longitude) those will give us the exact location where we are on the spot
-export async function apiResponseByCoords(lat: number, lon: number): promise<WeatherApiResponse>{
+export async function apiResponseByCoords(lat: number, lon: number): Promise<WeatherApiResponse>{
     // const key = getKey();
     // const location = `${lat}, ${lon}`
     // const url = `${BASE}/${encodeURIComponent(location)}` + `?unitGroup=metric` + `&key=${key}` + `&contentType=json`;
     
     // call our vercel proxy 
-    const response = await fetch(`/api/weather-coords?lat=${lat}&lon=${lon}`);
+    const response = await fetch(`/api/weatherCoords?lat=${lat}&lon=${lon}`);
 
     return handleResponse(response, `${lat}, ${lon}`);
 }

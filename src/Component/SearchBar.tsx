@@ -1,12 +1,13 @@
-import type {ChangeEventHandler, KeyboardEventHandler} from "react";
+import type {ChangeEvent, KeyboardEvent} from "react";
 interface SearchBarProps {
     value: string;
-    onChange: ChangeEventHandler<HTMLInputElement>;
-    onKeyDown: KeyboardEventHandler<HTMLInputElement>;
+    onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+    onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
+    placeholder?: string;
  }
 
 
-const SearchBar = ({value, onChange, onKeyDown}: SearchBarProps) => {
+const SearchBar = ({value, onChange, onKeyDown, placeholder}: SearchBarProps) => {
     return (
         <input
             id="searchBar"
@@ -14,7 +15,7 @@ const SearchBar = ({value, onChange, onKeyDown}: SearchBarProps) => {
             onChange={onChange}
             onKeyDown={onKeyDown}
             value={value}
-            placeholder="Enter city (e.g. Dubai, London...)"
+            placeholder={placeholder ?? "Enter city name..."}
             autoComplete="off"
             aria-label="City search"
             className="min-w-0 flex-1 rounded-lg border border-slate-700

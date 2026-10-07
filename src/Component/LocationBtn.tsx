@@ -1,14 +1,17 @@
 import { LocateFixed, Loader2, LocateOff } from "lucide-react";
 import { GEO_STATUS, type GeoStatus } from "../hooks/useGeolocation.ts";
-import type { MouseEventHandler } from "react";
+// import type { MouseEventHandler } from "react";
+import type {Lang } from "../utils/translations.ts";
+
 
 interface LocationBtnProps {
     status: GeoStatus;
-    onClick: MouseEventHandler<HTMLButtonElement>
-
+    onClick: () => void;
+    lang?: Lang; 
+    
 }
 
-const LocationBtn = ({ status, onClick }: LocationBtnProps) => {
+const LocationBtn = ({ status, onClick, lang }: LocationBtnProps) => {
     const isLoading = status === GEO_STATUS.LOADING;
     const isDenied = status === GEO_STATUS.DENIED || status === GEO_STATUS.UNAVAILABLE;
 
@@ -32,7 +35,11 @@ className = {`flex items-center gap-1.5 rounded-lg border px-3 py-2.5 text-xs fo
 { !isLoading && !isDenied && <LocateFixed size={14} />}
     
     <span className="hidden sm:inline">
-        {isLoading ? "Loading..." : isDenied ? "Denied" : "My Location"}
+        {isLoading
+          ? (lang === "ar" ? "جاري التحديد..." : "Locating...")
+          : isDenied
+          ? (lang === "ar" ? "مرفوض" : "Denied")
+          : (lang === "ar" ? "موقعي" : "My Location")}
     </span>
         </button >
     )

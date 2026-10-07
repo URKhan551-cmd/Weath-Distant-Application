@@ -1,4 +1,4 @@
-import {X, AlertTriangle} from "lucide-react";
+import {X} from "lucide-react";
 import type {WeatherAlert} from "../hooks/useAlerts.ts";
 import type {Lang} from "../utils/translations.ts";
 import {t} from "../utils/translations.ts";

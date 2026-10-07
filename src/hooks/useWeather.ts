@@ -1,11 +1,10 @@
 import {useState, useCallback} from "react";
 
-
 import {apiResponse, apiResponseByCoords} from "../Api/apiResponse.ts";
 
 // get actual response type of the data coming frm an api
 type WeatherData = Awaited<ReturnType<typeof apiResponse>>;
-type WeatherCoordsData = Awaited<ReturnType<typeof apiResponseByCoords>>;
+// type WeatherCoordsData = Awaited<ReturnType<typeof apiResponseByCoords>>;
 
 interface Coordinates {
     lat: number;

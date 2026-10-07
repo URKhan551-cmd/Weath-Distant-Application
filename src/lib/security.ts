@@ -47,7 +47,7 @@ export interface RateLimitConfig {
 export const RATE_LIMIT_BASIC: RateLimitConfig = {
     store: "basic",
     maxRequests: 50,
-    windowMs: 60 * 60 * 100,  // 1 hour
+    windowMs: 60 * 60 * 1000,  // 1 hour
 };
 
 
@@ -56,12 +56,12 @@ export const RATE_LIMIT_BASIC: RateLimitConfig = {
 export const RATE_LIMIT_STRICT: RateLimitConfig = {
     store: "strict",
     maxRequests: 20,
-    windowMs: 60 * 60 * 100, // 1 hour
+    windowMs: 60 * 60 * 1000, // 1 hour
 } 
 
 export interface RateLimitResult {
    allowed: boolean;
-   remainig: number;  // request left in this window
+   remaining: number;  // request left in this window
    resetIn: number;   // second until window reset
 }
 
@@ -104,6 +104,7 @@ export function checkRateLimit(ip: string, config: RateLimitConfig): RateLimitRe
 
 
 // clean up old entries everyHour to prevent memory leaks 
+
 setInterval(() => {
     const now = Date.now();
     for(const store of Object.values(stores)){
@@ -156,11 +157,12 @@ export function isAllowedOrigin(origin: string | undefined): boolean {
     if(!origin) return false; // no origin server-to-server = block
 
     // in development allow all localhost origins
-    if(process.env.NODE_ENV === "development") return true;
+    // if(typeof process !== "undefined" && process.env?.NODE_ENV === "development") return true;
 
 
     
-    return ALLOWED_ORIGINS.includes(origin);
+    return ALLOWED_ORIGINS.some((allowed) => origin === allowed || origin.endsWith(".vercel.app")
+);
 }
 
 
@@ -170,7 +172,7 @@ export function getCorsHeaders(origin: string | undefined): Record<string, strin
 
     return {
        "Access-Control-Allow-Origin": allowed ? (origin ?? "") : "",
-       "Access-Control-Allow-Methods": "GET", "POST", "OPTIONS",
+       "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
        "Access-Control-Allow-Headers": "Content-Type",
        "Access-Control-Max-Age":  "86400", // preflight cache 24hr
     };
@@ -186,10 +188,7 @@ export function getCorsHeaders(origin: string | undefined): Record<string, strin
 
 export function sanitizeLocation(input: unknown): string | null {
     if(typeof input !== "string") return null;
-    const cleaned = input.replace(/<[^>]*>/g, "") // strip html tags
-    .replace(/\0/g, "")  // stripe null
-    .trim()
-    .slice(0, 100);    // max 100 chars for city name 
+    const cleaned = input.replace(/<[^>]*>/g, "").replace(/\0/g, "").trim().slice(0, 100);    // max 100 chars for city name 
     
     if(cleaned.length < 1) return null;
     return cleaned;

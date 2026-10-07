@@ -18,7 +18,7 @@ interface CurrentConditions {
   uvindex?: number;
   cloudcover?: number;
   dew?: number;
-  windgust?: number;
+  windgust?: number | null;
   solarenergy?: number;
   conditions: string;
     icon: string;
@@ -207,16 +207,14 @@ function getOutDoorSafety(temp: number, feelsLike: number, uv: number, humidity:
 
 
 
-const StatCard = ({ icon, label, unit, value }: StateCardProps) => {
-return (
+const StatCard = ({ icon, label, unit, value }: StateCardProps) => (
     <div className="flex flex-col gap-1 rounded-xl border-slate-700/60 bg-slate-800/50 p-3">
         <span className="text-xs text-slate-500 uppercase tracking-wide">{label}</span>
         <span className="text-base font-semibold text-slate-100">
-            {icon} { value} {unit}
+            {icon} { value}{unit}
         </span>
     </div>
-)
-};
+);
 
 
 const HeatIndexCard = ({ temp, humidity }: HeatIndexCardProps) => {
@@ -328,17 +326,12 @@ const CurrentWeather = ({ data}: CurrentWeatherProps) => {
 
             {/* Stats grid-2 col mobile 3col and sm 4col  */}
             <div className="mb-4 grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
-                {STATS.map(({ key, label, unit, icon }) => 
-                    c[key] != null ? (
-                    <StatCard 
-                            key={key}
-                            icon={icon}
-                            label={label}
-                            value={ c[key]}
-                            unit={unit}
-                    />
-                 ) : null
-                )}
+                {STATS.map(({ key, label, unit, icon }) => {
+            const raw = c[key];
+            // ✅ Fix 1: only render StatCard when value is a number (not string)
+            if (raw == null || typeof raw !== "number") return null;
+            return <StatCard key={key} icon={icon} label={label} value={raw} unit={unit} />;
+          })}
             </div>
 
             {/* sunrise and sunset  */}
@@ -354,7 +347,7 @@ const CurrentWeather = ({ data}: CurrentWeatherProps) => {
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             <HeatIndexCard temp={c.temp} humidity={c.humidity}/>
             <UVCard uvIndex={c.uvindex} />
-            <OutdoorSafetyCard  temp={c.temp} feelsLike={c.feelslike} uvIndex={c.uvindex} humidity={c.humidity} />
+            <OutdoorSafetyCard  temp={c.temp} feelsLike={c.feelslike} uvIndex={c.uvindex ?? 0} humidity={c.humidity} />
         </div>
         </div>
     )

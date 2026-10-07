@@ -1,4 +1,4 @@
-import {useEffect, useRef} from "react";
+import {useEffect} from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -57,7 +57,7 @@ const FlyTo = ({lat, lon}: FlyToProps) => {
 
 
  // props
-interface WeatherProps  {
+interface WeatherMapProps  {
     userCoords: {lat: number; lon: number} | null;
     activeEmirate: string | null;
     onEmirateClick: (emirate: EmiratesData) => void;
@@ -73,7 +73,6 @@ const WeatherMap = ({
     weatherByEmirate = {},
 }: WeatherMapProps) => {
 
-    console.log("Usercoords dekhns hey", userCoords);
     //UAe center
     const UAE_CENTER: [number, number] = [24.0, 54.5];
     const UAE_ZOOM = 7;
@@ -183,7 +182,7 @@ const WeatherMap = ({
 
             </MapContainer>
         </div>
-    )
-}
+    );
+};
 
 export default WeatherMap;

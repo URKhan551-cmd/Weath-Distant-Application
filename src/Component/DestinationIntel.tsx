@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDestinations }  from "../hooks/useDestinations.ts";
-import { DESTINATION, filterByType, type DestinationType } from "../utils/destination.ts";
+import { filterByType, type DestinationType } from "../utils/destination.ts";
 import DestinationCard  from "./DestinationCard.tsx";
 import ComparePanel     from "./ComparePanel.tsx";
 import OmanTripPlanner  from "./OmanTripPlanner.tsx";

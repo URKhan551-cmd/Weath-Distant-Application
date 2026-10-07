@@ -5,7 +5,7 @@
 //   - bounding box [minLat, maxLat, minLon, maxLon] for coordinate detection
 // ─────────────────────────────────────────────────────────────────────────────
 import {calcDistance} from "./mapHelpers.ts";
-interface EmiratesData {
+export interface EmiratesData {
     id: string;
     name: string;
     arabic: string;

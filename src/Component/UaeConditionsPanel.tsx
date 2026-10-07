@@ -3,7 +3,8 @@ import {
     getDesertCondition,
     getBeachCondition,
 } from "../utils/mapHelpers.ts";
-import type {EmirateData} from "../utils/emirates.ts";
+import type {EmiratesData} from "../utils/emirates.ts";
+import type {Lang} from "../utils/translations.ts";
 
 interface CurrentConditions {
     temp: number;
@@ -19,6 +20,7 @@ interface CurrentConditions {
 interface UAEConditionsPanelProps {
     current: CurrentConditions;
     emirate?: EmiratesData | null;
+    lang?: Lang;
 }
 
 // reusable condition row card
@@ -32,7 +34,7 @@ const ConditionRow = ({ title, label, detail, color, bg }: { title: string; labe
     </div>
 );
 
-const UaeConditionsPanel = ({ current, emirate }: UAEConditionsPanelProps) => {
+const UaeConditionsPanel = ({ current, emirate, lang }: UAEConditionsPanelProps) => {
     const road = getRoadVisibility(current.visibility, current.conditions, current.windspeed, current.humidity);
     const desert = getDesertCondition(current.temp, current.uvindex, current.windspeed, current.humidity);
     const beach = getBeachCondition(current.temp, current.uvindex, current.windspeed, current.precipprob);
@@ -40,7 +42,7 @@ const UaeConditionsPanel = ({ current, emirate }: UAEConditionsPanelProps) => {
     return (
         <div className="flex flex-col gap-3">
             <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
-                🇦🇪 UAE Conditions
+                🇦🇪 {lang === "ar" ? "أحوال الإمارات" : "UAE Conditions"}
                 {emirate && <span className="ml-2 text-slate-600">-{emirate.name}</span>}
             </p>
 
@@ -56,7 +58,7 @@ const UaeConditionsPanel = ({ current, emirate }: UAEConditionsPanelProps) => {
             {/* Beach condition  */}
             {emirate?.coastline && (
                 <ConditionRow
-                    title={`🏖️ Beach Conditions${emirate.beachConditions ? ` — ${emirate.beachConditions}` : ""}`}
+                    title={`🏖️ ${lang === "ar" ? "أحوال الشاطئ" : "Beach Conditions"}${emirate.beachConditions ? ` — ${emirate.beachConditions}` : ""}`}
                     label={beach.label}
                     detail={beach.detail}
                     color={beach.color}
@@ -66,9 +68,9 @@ const UaeConditionsPanel = ({ current, emirate }: UAEConditionsPanelProps) => {
 
             {/* desert zone only for desert emirates  */}
 
-            {emirate?.desertZone && (
+            {(emirate?.desertZone || !desert.safe) && (
                 <ConditionRow
-                    title="🏜️ Desert Zone"
+                    title={lang === "ar" ? "🏜️ المنطقة الصحراوية" : "🏜️ Desert Zone"}
                     label={desert.label}
                     detail={desert.detail}
                     color={desert.color}
@@ -76,18 +78,9 @@ const UaeConditionsPanel = ({ current, emirate }: UAEConditionsPanelProps) => {
                 />
             )}
 
-            {/* always show desert card if condition are extreme */}
-            {!emirate?.desertZone && !desert.safe && (
-                <ConditionRow
-                    title="🏜️ Desert / Outdoor Warning"
-                    label={desert.label}
-                    detail={desert.detail}
-                    color={desert.color}
-                    bg={desert.bg}
-                />
-            )}
+            
         </div>
-    )
+    );
 };
 
 export default UaeConditionsPanel;

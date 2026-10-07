@@ -1,32 +1,29 @@
-import {getWeatherEmoji, formatTime, formatShortDate} from "../Api/weatherHelper.js";
+import {
+  getWeatherEmoji,
+  formatTime,
+  formatShortDate,
+  type HourlyWeatherWithDateTime,
+  type TwentyFourHourWeather,
+} from "../Api/weatherHelper";
 
-interface Hour {
-    date: string;
-    time: string;
-    icon: string;
-    temperature: number;
-    feelsLike: number;
-    rainProbability: number;
-    windspeed: number;
-}
 
 
 interface HourCardProps {
-    hour: Hour;
+    hour: HourlyWeatherWithDateTime;
 }
 
 interface HourSectionProps {
     title: string;
-    hours: Hour[];
+    hours: HourlyWeatherWithDateTime[];
 }
 
-interface HourlyData {
-    previous24Hour: Hour[];
-    next24Hour: Hour[];
-}
+// interface HourlyData {
+//     previous24Hour: Hour[];
+//     next24Hour: Hour[];
+// }
 
 interface HourlyDataWeatherProps {
-    hours: HourlyData;
+    hours: TwentyFourHourWeather;
 }
 
 const HourCard = ({hour}: HourCardProps) => {
@@ -53,7 +50,7 @@ const HourCard = ({hour}: HourCardProps) => {
                     </p>
 
                     <p className="text-[10px] text-slate-500">💧 {hour.rainProbability}%</p>
-    <p className="text-[10px] text-slate-500">💨 {hour.windspeed}</p>
+    <p className="text-[10px] text-slate-500">💨 {hour.windSpeed}</p>
                   </div>
     )
 }

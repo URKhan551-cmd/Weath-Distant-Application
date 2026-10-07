@@ -149,20 +149,20 @@ const AIChat = ({weatherContext}: AIChatProps) => {
     };
 
     // QUICK Prompt
-    const handleQuickPrompt = (prompt: string) => {
-      if(isLoading){
-        return;
-      }
-      sendMessages(prompt);
+    // const handleQuickPrompt = (prompt: string) => {
+    //   if(isLoading){
+    //     return;
+    //   }
+    //   sendMessages(prompt);
 
-    };
+    // };
 
     // input change hota ha to
-    const handleInputChange = (
-        e: React.ChangeEvent<HTMLInputElement>
-    ) => {
-        setInputText(e.target.value);
-    };
+    // const handleInputChange = (
+    //     e: React.ChangeEvent<HTMLInputElement>
+    // ) => {
+    //     setInputText(e.target.value);
+    // };
 
     const hasMessage = messages.length > 0;
 
@@ -242,9 +242,7 @@ const AIChat = ({weatherContext}: AIChatProps) => {
                     <textarea 
                     ref={inputRef} 
                     value={inputText} 
-                    onChange={(e) => { 
-                        setInputText(e.target.value); 
-                    }} 
+                    onChange={(e) => setInputText(e.target.value)} 
                     onKeyDown={handleKeyDown} 
                     placeholder="Ask about weather, safety, or where to go..." 
                     disabled={isLoading} 

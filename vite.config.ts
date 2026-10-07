@@ -30,7 +30,7 @@ export default defineConfig({
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/weather\.visualcrossing\.com\/.*/i,
-            handler: "staleWhileRevalidate",
+            handler: "StaleWhileRevalidate",
             options: {
               cacheName: "weather-api-cache",
               expiration: {maxEntries: 50, maxAgeSeconds: 600}, // 10 min
@@ -64,16 +64,16 @@ export default defineConfig({
 
   build: {
     chunkSizeWarningLimit: 500,
-    rollupOptions: {
-      output: {
-        // split vendor code for better cacjing
-        manualChunks: {
-          react: ["react", "react-dom"],
-          leaflet: ["leaflet", "react-leaflet"],
-          lucide: ["lucide-react"],
-        },
-      },
-    },
+    // rollupOptions: {
+    //   output: {
+    //     // split vendor code for better cacjing
+    //     manualChunks: {
+    //       react: ["react", "react-dom"],
+    //       leaflet: ["leaflet", "react-leaflet"],
+    //       lucide: ["lucide-react"],
+    //     },
+    //   },
+    // },
 },
 
 

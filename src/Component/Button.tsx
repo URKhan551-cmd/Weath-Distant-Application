@@ -1,5 +1,5 @@
 import { clsx } from "clsx";
-import {ReactNode, MouseEventHandler} from "react";
+import type {ReactNode, MouseEventHandler} from "react";
 
 
 type ButtonVariant = "primary" | "secondary" | "ghost";

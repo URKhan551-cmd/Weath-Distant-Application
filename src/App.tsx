@@ -9,7 +9,7 @@ import {
 import { RefreshCw, Search, Download } from "lucide-react";
  
 import { ROUTES } from "./router/routes.ts";
-import { getDailyWeather, get24HourWeather, type HourlyWeather } from "./Api/weatherHelper.ts";
+import { getDailyWeather, get24HourWeather } from "./Api/weatherHelper.ts";
 import { detectEmirate, isInsideUAE, EMIRATES, type EmiratesData } from "./utils/emirates.ts";
 import { useWeather }              from "./hooks/useWeather.ts";
 import { useGeolocation, GEO_STATUS } from "./hooks/useGeolocation.ts";
@@ -43,12 +43,11 @@ import OfflineBanner        from "./Component/OfflineBanner.tsx";
  
 const WeatherMap = lazy(() => import("./Component/WeatherMap.tsx"));
  
-import type { WeatherData } from "./Component/CurrentWeather.tsx";
+import type { WeatherApiResponse } from "./Api/apiResponse.ts";
  
-// ─── HourlyTab ────────────────────────────────────────────────────────────────
-interface HourlyTabProps { data: WeatherData; }
-const HourlyTab = ({ data }: HourlyTabProps) => {
-  let hourlyData: HourlyWeather[] | null = null;
+// ─── HourlyTab 
+const HourlyTab = ({ data }: { data: WeatherApiResponse }) => {
+  let hourlyData: ReturnType<typeof get24HourWeather> | null = null;
   try   { hourlyData = get24HourWeather(data); }
   catch { return <ErrorMessage message="Could not parse hourly data. Try refreshing." />; }
   if (!hourlyData) return <ErrorMessage message="No hourly data available." />;
@@ -298,7 +297,6 @@ function App() {
  
             {data && (
               <SaveBtn
-                city={data.address}
                 isSaved={isSaved(data.address)}
                 lang={lang}
                 onSave={handleSave}
@@ -409,7 +407,7 @@ function App() {
               <Route path={ROUTES.weather} element={
                 data ? (
                   <div className="flex flex-col gap-4">
-                    <CurrentWeather data={data} lang={lang} />
+                    <CurrentWeather data={data} />
                     {data.currentConditions && (
                       <UaeConditionsPanel
                         current={data.currentConditions}
@@ -433,7 +431,7 @@ function App() {
               {/* Daily forecast */}
               <Route path={ROUTES.daily} element={
                 data
-                  ? <DailyWeatherData days={getDailyWeather(data)} lang={lang} />
+                  ? <DailyWeatherData days={getDailyWeather(data)} />
                   : <SearchPrompt lang={lang} />
               } />
  
@@ -468,13 +466,12 @@ function App() {
               <Route path={ROUTES.explore} element={
                 <DestinationIntel
                   onCitySelect={handleDestinationSelect}
-                  lang={lang}
                 />
               } />
  
               {/* AI chat */}
               <Route path={ROUTES.ai} element={
-                <AIChat weatherContext={weatherContext} lang={lang} />
+                <AIChat weatherContext={weatherContext} />
               } />
  
               {/* Saved destinations */}
@@ -503,7 +500,6 @@ function App() {
       <FloatingAIBtn
         weatherContext={weatherContext}
         hidden={routerLocation.pathname === ROUTES.ai}
-        lang={lang}
       />
     </div>
   );

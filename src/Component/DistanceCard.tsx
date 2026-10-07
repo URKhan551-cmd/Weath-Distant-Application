@@ -1,6 +1,8 @@
 // here we will implement the distance between user and searched active location.
 import {Navigation} from "lucide-react";
 import {calcDistance, buildNavLink} from "../utils/mapHelpers.ts";
+import type {Lang} from "../utils/translations.ts";
+
 
 interface DistanceCardProps {
     userCoords: { lat: number; lon: number};
@@ -9,7 +11,7 @@ interface DistanceCardProps {
     lang?: Lang;
 }
 
-const DistanceCard = ({ userCoords, destCoords, destName }: DistanceCardProps) => {
+const DistanceCard = ({ userCoords, destCoords, destName, lang }: DistanceCardProps) => {
     const km = calcDistance(
         userCoords.lat, userCoords.lon,
         destCoords.lat, destCoords.lon
@@ -28,10 +30,10 @@ const DistanceCard = ({ userCoords, destCoords, destName }: DistanceCardProps) =
         >
             <div>
                 <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">
-                     📏 Distance to {destName}</p>
+                     📏{lang === "ar" ? "المسافة إلى" : "Distance to" } {destName}</p>
                      <div className="flex items-baseline gap-3">
                         <span className="text-2xl font-black text-sky-400">{km} km</span>
-                        <span className="text-sm text-slate-400">{driveTime} drive</span>
+                        <span className="text-sm text-slate-400">{driveTime} {lang === "ar" ? "قيادة" : "drive"}</span>
                      </div>
             </div>
 
@@ -44,7 +46,7 @@ const DistanceCard = ({ userCoords, destCoords, destName }: DistanceCardProps) =
             transition hover:bg-sky-500/25" 
             >
                 <Navigation size={14} />
-                Navigate
+                {lang === "ar" ? "تنقل" : "Navigate"}
             </a>
         </div>
         )

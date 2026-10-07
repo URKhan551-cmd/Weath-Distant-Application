@@ -10,7 +10,7 @@ interface BeforeInstallPromptEvent extends Event {
 export function usePWA(){
     const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
     const [isInstalled, setIsInstalled] = useState<boolean>(false);
-    const [isOffline, setIsOffline] = useState<boolean>(!navigator.online);
+    const [isOffline, setIsOffline] = useState<boolean>(!navigator.onLine);
     const [showOfflineBanner, setShowOfflineBanner] = useState<boolean>(false);
 
     useEffect(() => {

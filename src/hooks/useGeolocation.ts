@@ -1,85 +1,73 @@
-import {useState, useCallback} from "react";
-
-// all possible state the geolocation can be in
-export const  GEO_STATUS = {
-    IDLE: "idle",
-    LOADING: "loading",
-    SUCCESS: "success",
-    DENIED: "denied",
-    UNAVAILABLE: "unavailable",
-    TIMEOUT: "timeout",
-} as const;
-
+import { useState, useCallback } from "react";
+ 
 export type GeoStatus = "idle" | "loading" | "success" | "denied" | "unavailable" | "timeout";
-
+ 
+export const GEO_STATUS = {
+  IDLE:        "idle"        as const,
+  LOADING:     "loading"     as const,
+  SUCCESS:     "success"     as const,
+  DENIED:      "denied"      as const,
+  UNAVAILABLE: "unavailable" as const,
+  TIMEOUT:     "timeout"     as const,
+};
+ 
 export interface Coordinates {
-    lat: number;
-    lon: number;
+  lat: number;
+  lon: number;
 }
-export function useGeolocation(){
-    const [status, setStatus] = useState<GeoStatus>("idle");
-    const [coords, setCoords] = useState<Coordinates | null>(null); // {lat, lon};
-    const [error, setError] = useState<string | null>(null);
-
-
-    const geoLocation = useCallback((): void => {
-        // browser does not suppport geolocaton
-        if (!navigator.geolocation) {
-            setStatus(GEO_STATUS.UNAVAILABLE);
-            setError("Your browder does not support geolocation");
-            return;
+ 
+export function useGeolocation() {
+  const [status,   setStatus]   = useState<GeoStatus>("idle");
+  const [coords,   setCoords]   = useState<Coordinates | null>(null);
+  // ✅ single field — returned in the object so TypeScript sees it as "used"
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+ 
+  const geoLocation = useCallback(() => {
+    if (!navigator.geolocation) {
+      setStatus("unavailable");
+      setErrorMsg("Your browser does not support geolocation.");
+      return;
+    }
+ 
+    setStatus("loading");
+    setErrorMsg(null);
+    setCoords(null);
+ 
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setCoords({ lat: position.coords.latitude, lon: position.coords.longitude });
+        setStatus("success");
+      },
+      (err) => {
+        switch (err.code) {
+          case err.PERMISSION_DENIED:
+            setStatus("denied");
+            setErrorMsg("Location access denied. Enable it in browser settings or search manually.");
+            break;
+          case err.POSITION_UNAVAILABLE:
+            setStatus("unavailable");
+            setErrorMsg("Location unavailable. Try searching manually.");
+            break;
+          case err.TIMEOUT:
+            setStatus("timeout");
+            setErrorMsg("Location timed out. Try again.");
+            break;
+          default:
+            setStatus("unavailable");
+            setErrorMsg("Could not get location. Try searching manually.");
         }
-
-        // if we got some data then we will do this
-        setStatus(GEO_STATUS.LOADING);
-        setError(null);
-        setCoords(null);
-
-        navigator.geolocation.getCurrentPosition(
-            // success k bad
-            (position: GeolocationPosition): void => {
-                setCoords({
-                    lat: position.coords.latitude,
-                    lon: position.coords.longitude,
-                });
-                setStatus(GEO_STATUS.SUCCESS);
-
-            },
-
-            (err: GeolocationPositionError): void => {
-                switch (err.code) {
-                    case GeolocationPositionError.PERMISSION_DENIED:
-                        setStatus(GEO_STATUS.DENIED);
-                        setError("Location access was denied. Enable it in your browser settings or search manually.");
-                        break;
-                    case GeolocationPositionError.POSITION_UNAVAILABLE:
-                        setStatus(GEO_STATUS.UNAVAILABLE);
-                        setError("Location unavaiable. try searching manully.");
-                        break;
-                    case GeolocationPositionError.TIMEOUT:
-                        setStatus(GEO_STATUS.TIMEOUT);
-                        setError("Location request time out.try Again");
-                        break;
-                    default:
-                        setStatus(GEO_STATUS.UNAVAILABLE);
-                        setError("Could not get your location. try searching manually.");
-                }
-            },
-            // options 
-            {
-                enableHighAccuracy: true,
-                timeout: 10000, // 10 seconds
-                maximumAge: 300000, // cached upto 5 min of position
-            }
-        );
-    }, []);
-
-    const reset = useCallback((): void => {
-        setStatus(GEO_STATUS.IDLE);
-        setCoords(null);
-        setError(null);
-    }, []);
-
-    return {status, coords, error, geoLocation, reset}
-
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }
+    );
+  }, []);
+ 
+  const reset = useCallback(() => {
+    setStatus("idle");
+    setCoords(null);
+    setErrorMsg(null);
+  }, []);
+ 
+  // ✅ errorMsg is in the return object — TypeScript sees it as used
+  return { status, coords, errorMsg, geoLocation, reset };
 }
+ 

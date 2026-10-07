@@ -1,24 +1,25 @@
 import { EMIRATES, type EmiratesData} from "../utils/emirates.ts";
+import type { Lang } from "../utils/translations.ts";
 
-
-type EmirateId = (typeof EMIRATES)[number]["id"];
+// type EmirateId = (typeof EMIRATES)[number]["id"];
 // this line of code detect the id of emirates where "dubai" "sharjah" and many more but if the string is not equal to the given emirates 
 // will cause type error it mean  not any string is allowed just the emirates id string is allowed
 
 
 interface EmiratesSwitcherProps {
-   activeEmirate: EmirateId;
+   activeEmirate: string | null;
     onSelect: (emirate: EmiratesData) => void;
+    lang?: Lang;
 }
 
 
-const EmiratesSwitcher = ({ activeEmirate, onSelect}: EmiratesSwitcherProps) => {
+const EmiratesSwitcher = ({ activeEmirate, onSelect, lang}: EmiratesSwitcherProps) => {
 
     return (
         <div className="mb-4">
             {/* yaha label ayega konsa EMirates ha */}
             <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-slate-500">
-                🇦🇪 Quick Switch — UAE Emirates
+                 🇦🇪 {lang === "ar" ? "تبديل سريع — إمارات الإمارات" : "Quick Switch — UAE Emirates"}
             </p>
 
             {/* scrollbar row works great on mobiles */}

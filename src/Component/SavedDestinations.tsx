@@ -1,4 +1,4 @@
-import {Bookmark, BookmarkCheck, Trash2, MapPin} from "lucide-react";
+import {Bookmark, BookmarkCheck, Trash2} from "lucide-react";
 import type {Lang} from "../utils/translations.ts";
 import {t} from "../utils/translations.ts";
 import type {SavedDestination} from "../hooks/useSavedDestinations.ts";
@@ -95,13 +95,13 @@ const SavedDestinations = ({
 
 // save btn in header when weather loaded
 interface SaveBtnProps {
-  city: string;
+//   city: string;
   isSaved: boolean;
   lang: Lang;
   onSave: () => void;
 }
 
-export const SaveBtn = ({city, isSaved, lang, onSave}: SaveBtnProps) => (
+export const SaveBtn = ({isSaved, lang, onSave}: SaveBtnProps) => (
     <button
       onClick={onSave}
       disabled={isSaved}

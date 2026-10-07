@@ -29,7 +29,7 @@ interface AlertInput {
 }
 
 export function useAlerts(current: AlertInput | null){
-    const [dismissed, setDismissed] = useState<set<string>>(new Set());
+    const [dismissed, setDismissed] = useState<Set<string>>(new Set());
 
     const dismiss = useCallback(
       (id: string) => {

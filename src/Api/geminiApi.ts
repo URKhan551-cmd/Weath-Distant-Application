@@ -1,7 +1,7 @@
 // SDK. This handles everything on the frontend: 
 // structured prompting, request state management, empty checking, network failures, and API error parsing
-import {GoogleGenAI} from "@google/genai";
-import type {VisualCrossingWeatherData} from "./weatherHepler.ts";
+// import {GoogleGenAI} from "@google/genai";
+// import type {VisualCrossingWeatherData} from "./weatherHelper.ts";
 
 
 
@@ -9,6 +9,31 @@ import type {VisualCrossingWeatherData} from "./weatherHepler.ts";
 export interface ChatMessage {
     role: "user" | "assistant";
     content: string;
+}
+
+// shape of the data we pass as context interface define
+export interface WeatherContext { 
+    location: string;
+    emirate?: {name: string; arabic: string} | null;
+    current?: {
+        temp: number;
+        feelslike: number;
+        humidity: number;
+        windspeed: number;
+        uvindex: number;
+        visibility: number;
+        precipprob: number;
+        conditions: string;
+        pressure: number;
+        dew: number;
+    } | null;
+}
+
+// expected response type
+export interface ApiResponseResult {
+    success: boolean;
+    answer?: string;
+    error?: string; 
 }
 
 
@@ -73,23 +98,6 @@ Current date/time context: ${new Date().toLocaleString("en-AE", { timeZone: "Asi
 }
 
 
-// shape of the data we pass as context interface define
-export interface WeatherContext { 
-    location: string;
-    emirate?: {name: string; arabic: string} | null;
-    current?: {
-        temp: number;
-        feelslike: number;
-        humidity: number;
-        windspeed: number;
-        uvindex: number;
-        visibility: number;
-        precipprob: number;
-        conditions: string;
-        pressure: number;
-        dew: number;
-    } | null;
-}
 
 export const quickPrompts: { label: string; prompt: string; emoji: string }[] = [
     {
@@ -145,12 +153,6 @@ export const quickPrompts: { label: string; prompt: string; emoji: string }[] = 
 ];
 
 
-// expected response type
-export interface ApiResponseResult {
-    success: boolean;
-    answer?: string;
-    error?: string; 
-}
 
 
 // handle gemini call directly from client
