@@ -34,6 +34,7 @@ export const ChatBubble = ({imageSrc, name, message, time}: ChatBubbleProps) => 
                         {time}
                     </span>
                 )}
+            
             </div>
         </div>
     );

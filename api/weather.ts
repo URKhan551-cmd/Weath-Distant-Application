@@ -25,7 +25,7 @@ import {
     RATE_LIMIT_BASIC,
 }  from "../src/lib/security.ts";
 
-const BASE = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/service/timeline";
+const BASE = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline";
 
 // helper attach all security headers to every response
 function applyHeaders(res: VercelResponse, origin: string | undefined, extra: Record<string, string> = {}): void {
@@ -83,16 +83,55 @@ export default async function handler(req: VercelRequest, res: VercelResponse){
     // API KEY GUARD
     // key lives in vercel environment variables- never in code.
     const key = process.env.WEATHER_API_KEY;
+
+     
+    console.log("Weather key exists:", Boolean(key));
+console.log("Weather key length:", key?.length ?? 0);
+    console.log("Weather key has surrounding whitespace:", key !== key?.trim());
+
+    console.log("Key starts with quote:", /^["']/.test(key ?? ""));
+console.log("Key ends with quote:", /["']$/.test(key ?? ""));
+
+     const fingerprint = key
+  ? await crypto.subtle.digest(
+      "SHA-256",
+      new TextEncoder().encode(key)
+    )
+  : null;
+
+console.log(
+  "WEATHER_API_KEY fingerprint:",
+  fingerprint
+    ? Array.from(new Uint8Array(fingerprint))
+        .slice(0, 6)
+        .map((byte) => byte.toString(16).padStart(2, "0"))
+        .join("")
+    : "MISSING"
+);
+
     if(!key){
         return res.status(500).json({error: "Server Configuration error."});
     }
 
     // fetch from visua; crossing.
     try {
-        const url = `${BASE}/${encodeURIComponent(location)}?unitGroup=metric&key=${key}&contentType=json`;
-        const upstream = await fetch(url);
+        const url = `${BASE}/${encodeURIComponent(location)}`+`?unitGroup=metric&key=${encodeURIComponent(key)}`+`&contentType=json`;
 
+        console.log(
+  "SERVER: Visual Crossing URL:",
+  url.replace(key, "***")
+);
+
+        const upstream = await fetch(url);
+   
+        const upstreamBody = await upstream.text();
+
+console.log("Visual Crossing status:", upstream.status);
+         
         if(!upstream.ok){
+
+console.log("Visual Crossing error body:", upstreamBody);
+
            if(upstream.status === 400){
             return res.status(400).json({error: `Location "${location}" not found.`});
 
@@ -106,10 +145,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse){
             return res.status(429).json({error: "Weather service quote exceeded. try again later."});
            }
 
-           return res.status(502).json({error: "Weather service error (${upstream.status})"});
+           
+           
+           return res.status(502).json({error: `Weather service error (${upstream.status})`});
         }
-        const data = await upstream.json();
 
+        let data;
+        try {
+            data = JSON.parse(upstreamBody);
+        } catch(err: unknown){
+            console.error("Failed to parse Visual Crossing JSON:", err); 
+            return res.status(502).json({ error: "Invalid response from weather service.", });
+        }
+        // const data = await upstream.json();
+        console.log("SERVER: Visual Crossing data received");
+        
+        console.log("SERVER: Visula crossing data", data);
         // cache the response 
         // s maxage=600 vercel cdn cache is for 10 min
         // stale-while-revalidation=60 server stale while fetching freshg

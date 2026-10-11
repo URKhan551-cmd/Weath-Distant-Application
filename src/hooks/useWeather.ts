@@ -26,13 +26,22 @@ export function useWeather(){
 
     const fetchByCity = useCallback( async (city: string): Promise<void> => {
         const target = city.trim();
+        console.log("Target city name: ", target);
         if(!target) {setError("Please enter a city name."); return;}
+
+        const normalizedCity = target.replace(
+           /\bUAE\b/i,
+           "United Arab Emirates"
+        );
+
+console.log("Requesting weather for:", normalizedCity);
+
 
         setLoading(true);
         setError(null);
 
         try{
-            const result = await apiResponse(target);
+            const result = await apiResponse(normalizedCity);
             setData(result);
             setLastLocation({
                 type: "city",

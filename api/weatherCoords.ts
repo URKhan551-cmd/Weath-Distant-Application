@@ -12,7 +12,7 @@ import type {VercelRequest, VercelResponse} from "@vercel/node";
 import {
     checkRateLimit,
     getClientIp,
-    getCorsHeaders,\
+    getCorsHeaders,
     SECURITY_HEADERS,
     RATE_LIMIT_BASIC,
 } from "../src/lib/security.ts";

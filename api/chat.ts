@@ -85,16 +85,16 @@ function validateContext(ctx: unknown): WeatherContext | null {
 
     return {
         location: c.location.slice(0,100),
-        emirate: null;  //we skip emirate validation for brevity safe to omit
-        current: null;  // same we only use it for display not for logic
+        emirate: null,  //we skip emirate validation for brevity safe to omit
+        current: null,  // same we only use it for display not for logic
     };
 }
 
 // ── SYSTEM PROMPT BUIL─────────────
 // Reproduced from geminiApi.ts but runs server-side so context is safe
 
-function buildSystemPrompt(ctx: WeatherContex, rawCtx: Record<string, unknown>): string {
-    const current = rawCtx.current as WeatherContex["current"];
+function buildSystemPrompt(ctx: WeatherContext, rawCtx: Record<string, unknown>): string {
+    const current = rawCtx.current as WeatherContext["current"];
     const emirate = rawCtx.emirate as WeatherContext["emirate"];
 
     const currentBlock = current ? `
@@ -151,7 +151,7 @@ Current UAE time: ${new Date().toLocaleString("en-AE", { timeZone: "Asia/Dubai" 
 // main handler
 export default async function handler(req: VercelRequest, res: VercelResponse){
 
-    const origin = req.header["origin"] as string | undefined;
+    const origin = req.headers.origin as string | undefined;
     //CORS preflight
     if(req.method === "OPTIONS"){
         applyHeaders(res, origin);
@@ -222,7 +222,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse){
     try{
     const systemPrompt = buildSystemPrompt(ctx, rawContext as Record<string, unknown>);
 
-    const geminiUrl = "https://generativelanguage.googleapi.com/v1beta/models/gemini-2.0-flash:generateContent";
+    const geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent";
 
     const geminiBody = {
         system_instruction: {parts: [{text: systemPrompt}]},
@@ -230,7 +230,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse){
             role: m.role === "assistant" ? "model" : "user",
             parts: [{text: m.content}],
         })),
-        generateConfig: {
+        generationConfig: {
             maxOutputTokens: 1024,
             temperature: 0.7,
         },
@@ -247,27 +247,46 @@ export default async function handler(req: VercelRequest, res: VercelResponse){
         body: JSON.stringify(geminiBody),
     });
 
+    const upstreamBody = await upstream.text();
+
+
+
     if(!upstream.ok){
-        const errData= await upstream.json().catch(() => ({}));
-        const errMsg = (errData as {error?: {message?: string}})?.error?.message ?? upstream.statusText;
+        let errData: {error?: {message?: string}} = {};
 
-        if(upstream.status === 400 )return res.status(400).json({error: `AI request invalid: ${errMsg}`});
-        if (upstream.status === 429) return res.status(429).json({ error: "AI quota exceeded. Try again later." });
-      if (upstream.status === 401) return res.status(502).json({ error: "AI service authentication failed." });
+        try {
+            errData = JSON.parse(upstreamBody);
+        } catch {
+            console.error("Gemini returned a non-JSON error response.");
+        }
 
-      return res.status(502).json({error: `AI service error (${upstream.status})`
+        const errMsg = errData.error?.message ?? upstream.statusText;
+
+
+        if(upstream.status === 400 )return res.status(400).json({
+            error: `AI request invalid: ${errMsg}`
+        });
+        if (upstream.status === 429) return res.status(429).json({ 
+            error: "AI quota exceeded. Try again later." 
+        });
+      if (upstream.status === 401) return res.status(502).json({
+         error: "AI service authentication failed."
+        });
+
+      return res.status(502).json({
+        error: `AI service error (${upstream.status})`
 
       });
     }
 
-    const geminiData = await upstream.json() as {
-        candidate?: Array<{
+    const geminiData = JSON.parse(upstreamBody) as {
+        candidates?: Array<{
             content?: {parts?: Array<{text?: string}>};
             finishReason?: string;
         }>;
     };
 
-    const candidate = geminiData.candidate?.[0];
+    const candidate = geminiData.candidates?.[0];
     const text = candidate?.content?.parts?.[0]?.text?.trim();
 
     if(!text || candidate?.finishReason === "SAFETY"){
@@ -281,7 +300,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse){
     return res.status(200).json({answer: text});
 
     } catch (err: unknown){
-        const message = err instanceof Error ? err.message : "Unknow error";
-        return res.status(503).json({error: "Failed top reach AI service.", detail: message });
+        const message = err instanceof Error ? err.message : String(err);
+
+        // console.log("chat api failed", err) 
+        return res.status(503).json({
+            error: "Failed to reach AI service.", 
+            detail: message 
+        });
     }
 }
