@@ -28,6 +28,44 @@ import {
 
 const BASE = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline";
 
+// CHANGED 1: Normalize common UAE city names before sending them to Visual Crossing.
+// This helps prevent ambiguous results such as Dubai being resolved to Kenya.
+function normalizeUaeLocation(location: string): string {
+  const normalized = location
+    .trim()
+    .toLowerCase()
+    .replace(/[.,]/g, " ")
+    .replace(/\s+/g, " ");
+
+  const uaeCities: Record<string, string> = {
+    dubai: "Dubai, United Arab Emirates",
+    "dubai uae": "Dubai, United Arab Emirates",
+    "dubai united arab emirates": "Dubai, United Arab Emirates",
+
+    "abu dhabi": "Abu Dhabi, United Arab Emirates",
+    "abu dhabi uae": "Abu Dhabi, United Arab Emirates",
+    "abu dhabi united arab emirates": "Abu Dhabi, United Arab Emirates",
+
+    sharjah: "Sharjah, United Arab Emirates",
+    "sharjah uae": "Sharjah, United Arab Emirates",
+    "sharjah united arab emirates": "Sharjah, United Arab Emirates",
+
+    ajman: "Ajman, United Arab Emirates",
+    "ajman uae": "Ajman, United Arab Emirates",
+
+    "ras al khaimah": "Ras Al Khaimah, United Arab Emirates",
+    fujairah: "Fujairah, United Arab Emirates",
+    "umm al quwain": "Umm Al Quwain, United Arab Emirates",
+    "al ain": "Al Ain, United Arab Emirates",
+
+    };
+
+  // CHANGED: Use a canonical UAE name for recognized cities.
+  // Keep other valid locations unchanged.
+  return uaeCities[normalized] ?? location.trim();
+}
+
+
 function applyHeaders(res: VercelResponse, origin: string | undefined, extra: Record<string, string> = {}): void {
   const cors = getCorsHeaders(origin);
   Object.entries({...SECURITY_HEADERS,...cors,...extra}).forEach(([k, v]) => res.setHeader(k, v));
@@ -71,6 +109,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse){
     return res.status(400).json({error: "Location is required and must be valid string."});
   }
 
+// CHANGED 2: Normalize the sanitized city before constructing the API URL.
+  const location = normalizeUaeLocation(sanitizedLocation);
+
   const key = process.env.WEATHER_API_KEY?.trim().replace(/^["']|["']$/g, '');
 
   if(!key){
@@ -79,7 +120,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse){
   }
 
   try {
-    const url = `${BASE}/${encodeURIComponent(location)}?unitGroup=metric&key=${encodeURIComponent(key)}&contentType=json`;
+    // CHANGED 3
+    const encodeLocation = encodeURIComponent(location) 
+    const params = new URLSearchParams({
+      unitGroup: "metric",
+      key,
+      contentType: "json",
+    });
+
+     const url = `${BASE}/${encodedLocation}?${params.toString()}`;
+
+    // CHANGED 4: Log the final location to help diagnose incorrect geocoding.
+    console.log("Weather request location:", location);   
     const upstream = await fetch(url);
     const upstreamBody = await upstream.text();
 
