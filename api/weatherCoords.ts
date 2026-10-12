@@ -15,7 +15,7 @@ import {
     getCorsHeaders,
     SECURITY_HEADERS,
     RATE_LIMIT_BASIC,
-} from "../src/lib/security.ts";
+} from "../src/lib/security.js";
 
 const BASE = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline";
 

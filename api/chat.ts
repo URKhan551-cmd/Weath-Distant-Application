@@ -30,7 +30,7 @@ import {
     sanitizeMessages,
     SECURITY_HEADERS,
     RATE_LIMIT_STRICT,
-} from "../src/lib/security.ts";
+} from "../src/lib/security.js";
 
 
 function applyHeaders(res: VercelResponse, origin:string | undefined, extra:Record<string, string> = {}): void {

@@ -24,7 +24,7 @@ import {
   sanitizeLocation,
   SECURITY_HEADERS,
   RATE_LIMIT_BASIC,
-} from "../src/lib/security"; // <- NO.ts
+} from "../src/lib/security.js"; // <- NO.ts
 
 const BASE = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline";
 

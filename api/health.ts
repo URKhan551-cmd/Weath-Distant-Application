@@ -10,7 +10,7 @@
 // SAFE: returns true/false for key presence — never exposes the actual keys
 
 import type {VercelRequest, VercelResponse} from "@vercel/node";
-import {SECURITY_HEADERS} from "../src/lib/security.ts";
+import {SECURITY_HEADERS} from "../src/lib/security.js";
 
 export default function handler(req: VercelRequest, res: VercelResponse) {
     Object.entries(SECURITY_HEADERS).forEach(([k, v]) => res.setHeader(k, v));
