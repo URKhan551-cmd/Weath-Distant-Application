@@ -101,7 +101,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse){
   }
 
   const rawLocation = req.query.location;
-  const location = sanitizeLocation(
+  const sanitizedLocation = sanitizeLocation(
     Array.isArray(rawLocation)? rawLocation[0] : rawLocation
   );
 
