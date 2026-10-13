@@ -110,7 +110,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse){
   }
 
 // CHANGED 2: Normalize the sanitized city before constructing the API URL.
-  const location = normalizeUaeLocation(sanitizedLocation);
+  const normalizedLocation = normalizeUaeLocation(sanitizedLocation);
 
   const key = process.env.WEATHER_API_KEY?.trim().replace(/^["']|["']$/g, '');
 
@@ -121,22 +121,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse){
 
   try {
     // CHANGED 3
-    const encodeLocation = encodeURIComponent(location) 
+    const encodeLocation = encodeURIComponent(normalizedLocation) 
     const params = new URLSearchParams({
       unitGroup: "metric",
       key,
       contentType: "json",
     });
 
-     const url = `${BASE}/${encodedLocation}?${params.toString()}`;
+     const url = `${BASE}/${encodeLocation}?${params.toString()}`;
 
     // CHANGED 4: Log the final location to help diagnose incorrect geocoding.
-    console.log("Weather request location:", location);   
+    console.log("Weather request location:", normalizedLocation);   
     const upstream = await fetch(url);
     const upstreamBody = await upstream.text();
 
     if(!upstream.ok){
-      if(upstream.status === 400) return res.status(400).json({error: `Location "${location}" not found.`});
+      if(upstream.status === 400) return res.status(400).json({error: `Location "${normalizedLocation}" not found.`});
       if(upstream.status === 401) return res.status(502).json({error: "Weather service authentication failed."});
       if(upstream.status === 429) return res.status(429).json({error: "Weather service quota exceeded. try again later."});
       return res.status(502).json({error: `Weather service error (${upstream.status})`});
